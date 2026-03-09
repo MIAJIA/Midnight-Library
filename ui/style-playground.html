@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-style="1">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 1 & Last Day — Style Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── SWITCHER ─────────────────────────────────────────── */
+    #switcher {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; background: #080808; border-bottom: 1px solid #1e1e1e;
+    }
+    .s-btn {
+      flex: 1; padding: 11px 6px; border: none; background: transparent;
+      color: #444; cursor: pointer; font-size: 10px; letter-spacing: 0.08em;
+      font-family: 'IBM Plex Mono', monospace; transition: all 0.2s;
+      border-right: 1px solid #1e1e1e; text-transform: uppercase;
+    }
+    .s-btn:last-child { border-right: none; }
+    .s-btn:hover { color: #888; }
+    [data-style="1"] .s-btn[data-s="1"] { color: #00ff41; }
+    [data-style="2"] .s-btn[data-s="2"] { color: #ffcd75; }
+    [data-style="3"] .s-btn[data-s="3"] { color: #58a6ff; }
+    [data-style="4"] .s-btn[data-s="4"] { color: #00ffff; }
+
+    /* ─── LAYOUT ────────────────────────────────────────────── */
+    html, body { height: 100%; transition: background 0.3s; }
+    body { padding-top: 42px; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .wrap { width: 100%; max-width: 680px; padding: 20px; }
+
+    /* ══════════════════════════════════════════════════════════
+       STYLE 1 · CRT GREEN TERMINAL
+    ══════════════════════════════════════════════════════════ */
+    [data-style="1"] { background: #060d06; font-family: 'VT323', monospace; }
+
+    [data-style="1"] body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 50;
+      background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.13) 2px,rgba(0,0,0,0.13) 4px);
+    }
+    [data-style="1"] .card {
+      border: 1px solid #00b330; padding: 32px 36px;
+      box-shadow: 0 0 32px rgba(0,255,65,0.15), inset 0 0 60px rgba(0,255,65,0.02);
+      border-radius: 4px; position: relative;
+    }
+    [data-style="1"] .card::before {
+      content: ''; position: absolute; inset: 0; border-radius: 4px; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%);
+    }
+    [data-style="1"] .title    { font-size: 30px; color: #00ff41; letter-spacing: 0.18em; text-transform: uppercase; text-shadow: 0 0 12px #00ff41, 0 0 28px rgba(0,255,65,0.4); margin-bottom: 2px; }
+    [data-style="1"] .subtitle { font-size: 17px; color: #006b1e; letter-spacing: 0.15em; margin-bottom: 26px; }
+    [data-style="1"] .stats    { display: flex; border: 1px solid #004f17; margin-bottom: 22px; }
+    [data-style="1"] .stat     { flex: 1; padding: 8px 14px; border-right: 1px solid #004f17; }
+    [data-style="1"] .stat:last-child { border-right: none; }
+    [data-style="1"] .s-lbl   { font-size: 15px; color: #006b1e; display: block; }
+    [data-style="1"] .s-val   { font-size: 22px; color: #00ff41; text-shadow: 0 0 6px rgba(0,255,65,0.6); }
+    [data-style="1"] .round   { font-size: 17px; color: #005515; margin-bottom: 16px; }
+    [data-style="1"] .narr    {
+      font-size: 21px; color: #00cc35; line-height: 1.6; margin-bottom: 24px;
+      padding: 18px 20px; border-left: 2px solid #00ff41;
+      background: rgba(0,255,65,0.025); text-shadow: 0 0 3px rgba(0,255,65,0.25);
+    }
+    [data-style="1"] .narr em { color: #00ff85; font-style: normal; }
+    [data-style="1"] hr       { border: none; border-top: 1px solid #003d10; margin: 18px 0; }
+    [data-style="1"] .choices { display: flex; flex-direction: column; gap: 6px; }
+    [data-style="1"] .cho     { font-size: 21px; color: #009922; cursor: pointer; padding: 7px 12px; transition: all 0.1s; }
+    [data-style="1"] .cho:hover { color: #00ff41; background: rgba(0,255,65,0.06); text-shadow: 0 0 8px #00ff41; }
+    [data-style="1"] .cho-key { color: #00ff41; }
+    [data-style="1"] .cho-d   { display: flex; align-items: center; gap: 6px; }
+    [data-style="1"] .inp     { background: transparent; border: none; border-bottom: 1px solid #00993a; color: #00ff41; font-family: 'VT323',monospace; font-size: 21px; outline: none; flex: 1; }
+    [data-style="1"] .cursor  { display: inline-block; width: 11px; height: 19px; background: #00ff41; vertical-align: middle; box-shadow: 0 0 8px #00ff41; animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ══════════════════════════════════════════════════════════
+       STYLE 2 · PIXEL / 8-BIT  (PICO-8 palette)
+    ══════════════════════════════════════════════════════════ */
+    [data-style="2"] { background: #1a1c2c; font-family: 'Press Start 2P', monospace; }
+
+    [data-style="2"] .card {
+      background: #1a1c2c; padding: 28px 28px 32px;
+      border: 3px solid #29366f;
+      box-shadow: 0 0 0 3px #3b5dc9, 0 0 0 6px #1a1c2c, 0 0 0 9px #29366f;
+      image-rendering: pixelated;
+    }
+    [data-style="2"] .title    { font-size: 9px; color: #ffcd75; letter-spacing: 0.02em; text-transform: uppercase; line-height: 2; margin-bottom: 4px; }
+    [data-style="2"] .subtitle { font-size: 6px; color: #b13e53; margin-bottom: 22px; line-height: 2; }
+    [data-style="2"] .stats    { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 18px; }
+    [data-style="2"] .stat     { background: #29366f; border: 2px solid #3b5dc9; padding: 8px 6px; }
+    [data-style="2"] .s-lbl   { font-size: 5px; color: #41a6f6; display: block; margin-bottom: 5px; }
+    [data-style="2"] .s-val   { font-size: 7px; color: #73eff7; display: block; }
+    [data-style="2"] .px-bar  { margin-top: 5px; height: 4px; background: #1a1c2c; border: 1px solid #3b5dc9; }
+    [data-style="2"] .px-fill { height: 100%; }
+    [data-style="2"] .round   { font-size: 6px; color: #5d275d; margin-bottom: 14px; }
+    [data-style="2"] .narr    { font-size: 6.5px; color: #c0cbdc; line-height: 2.3; margin-bottom: 18px; padding: 14px; background: #29366f; border: 2px solid #3b5dc9; border-left: 5px solid #41a6f6; }
+    [data-style="2"] .narr em { color: #73eff7; font-style: normal; }
+    [data-style="2"] hr       { border: none; height: 3px; background: #29366f; margin: 14px 0; }
+    [data-style="2"] .choices { display: flex; flex-direction: column; gap: 6px; }
+    [data-style="2"] .cho     { font-size: 6.5px; color: #73eff7; cursor: pointer; padding: 9px 11px; background: #29366f; border: 2px solid #3b5dc9; transition: all 0.1s; line-height: 1.8; }
+    [data-style="2"] .cho:hover { background: #3b5dc9; color: #fff; border-color: #41a6f6; }
+    [data-style="2"] .cho-key { color: #a7f070; }
+    [data-style="2"] .cho-d   { display: flex; flex-direction: column; gap: 7px; }
+    [data-style="2"] .inp     { background: #1a1c2c; border: 2px solid #41a6f6; color: #73eff7; font-family: 'Press Start 2P',monospace; font-size: 6.5px; padding: 6px 8px; outline: none; width: 100%; }
+
+    /* ══════════════════════════════════════════════════════════
+       STYLE 3 · SILICON VALLEY CORPORATE DARK
+    ══════════════════════════════════════════════════════════ */
+    [data-style="3"] { background: #0d1117; font-family: 'IBM Plex Mono', monospace; }
+
+    [data-style="3"] .card { background: #0d1117; border: 1px solid #21262d; padding: 36px; }
+    [data-style="3"] .title    { font-size: 11px; color: #8b949e; font-weight: 300; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 3px; }
+    [data-style="3"] .subtitle { font-size: 10px; color: #30363d; margin-bottom: 30px; letter-spacing: 0.1em; }
+    [data-style="3"] .stats    { display: flex; border: 1px solid #21262d; background: #161b22; margin-bottom: 26px; }
+    [data-style="3"] .stat     { flex: 1; padding: 11px 16px; border-right: 1px solid #21262d; }
+    [data-style="3"] .stat:last-child { border-right: none; }
+    [data-style="3"] .s-lbl   { font-size: 10px; color: #30363d; display: block; margin-bottom: 3px; letter-spacing: 0.1em; }
+    [data-style="3"] .s-val   { font-size: 13px; color: #58a6ff; font-weight: 500; }
+    [data-style="3"] .round   { font-size: 10px; color: #30363d; margin-bottom: 20px; letter-spacing: 0.12em; }
+    [data-style="3"] .round .hi { color: #3fb950; }
+    [data-style="3"] .narr    { font-size: 12.5px; color: #6e7681; line-height: 1.9; margin-bottom: 28px; padding: 20px 22px; background: #161b22; border: 1px solid #21262d; border-left: 2px solid #21262d; font-weight: 300; font-style: italic; }
+    [data-style="3"] .narr em { color: #c9d1d9; font-style: normal; font-weight: 400; }
+    [data-style="3"] hr       { border: none; border-top: 1px solid #21262d; margin: 20px 0; }
+    [data-style="3"] .choices { display: flex; flex-direction: column; gap: 2px; }
+    [data-style="3"] .cho     { font-size: 12.5px; color: #484f58; cursor: pointer; padding: 10px 16px; transition: all 0.15s; border-left: 2px solid transparent; font-weight: 400; }
+    [data-style="3"] .cho:hover { color: #c9d1d9; background: #161b22; border-left-color: #58a6ff; }
+    [data-style="3"] .cho-key { color: #58a6ff; margin-right: 10px; }
+    [data-style="3"] .cho-d   { display: flex; align-items: center; gap: 8px; }
+    [data-style="3"] .inp     { background: transparent; border: none; border-bottom: 1px solid #21262d; color: #8b949e; font-family: 'IBM Plex Mono',monospace; font-size: 12.5px; outline: none; flex: 1; padding: 2px 0; }
+    [data-style="3"] .inp:focus { border-bottom-color: #58a6ff; color: #c9d1d9; }
+
+    /* ══════════════════════════════════════════════════════════
+       STYLE 4 · NEON NOIR / CYBERPUNK
+    ══════════════════════════════════════════════════════════ */
+    [data-style="4"] { background: #000; font-family: 'Share Tech Mono', monospace; }
+
+    [data-style="4"] body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 50;
+      background: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,255,0.018) 3px,rgba(0,255,255,0.018) 4px);
+    }
+    [data-style="4"] .card {
+      padding: 32px 36px; position: relative;
+      border: 1px solid #00ffff22;
+      background: #000;
+    }
+    [data-style="4"] .card::before {
+      content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: 1px;
+      background: linear-gradient(135deg, #00ffff, #ff00ff, #00ffff, #ff00ff);
+      background-size: 300% 300%;
+      animation: bgAnim 6s ease infinite;
+      opacity: 0.35;
+    }
+    @keyframes bgAnim { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+    [data-style="4"] .title {
+      font-family: 'Orbitron', sans-serif; font-size: 16px; color: #00ffff;
+      letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 4px;
+      text-shadow: 0 0 10px #00ffff, 0 0 30px rgba(0,255,255,0.4);
+      animation: glitch 7s infinite;
+    }
+    @keyframes glitch {
+      0%,93%,100% { text-shadow: 0 0 10px #00ffff, 0 0 30px rgba(0,255,255,0.4); transform: none; }
+      94% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; transform: translateX(-1px); }
+      95% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; transform: translateX(1px); }
+      96% { text-shadow: 0 0 10px #00ffff; transform: none; }
+    }
+    [data-style="4"] .subtitle { font-size: 11px; color: #ff00ff66; margin-bottom: 28px; letter-spacing: 0.25em; }
+    [data-style="4"] .stats    { display: flex; gap: 2px; margin-bottom: 22px; }
+    [data-style="4"] .stat     { flex: 1; padding: 10px 12px; border: 1px solid #00ffff1a; background: rgba(0,255,255,0.025); position: relative; overflow: hidden; }
+    [data-style="4"] .stat::after { content:''; position:absolute; bottom:0;left:0;right:0;height:1px; background: linear-gradient(90deg,transparent,#00ffff55,transparent); }
+    [data-style="4"] .s-lbl   { font-size: 9px; color: #ff00ff77; letter-spacing: 0.2em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+    [data-style="4"] .s-val   { font-size: 15px; color: #00ffff; text-shadow: 0 0 8px #00ffff; }
+    [data-style="4"] .round   { font-size: 10px; color: #ffffff2a; margin-bottom: 18px; letter-spacing: 0.2em; text-transform: uppercase; }
+    [data-style="4"] .narr    {
+      font-size: 14px; color: #888; line-height: 1.8; margin-bottom: 26px;
+      padding: 20px; border: 1px solid #1a1a1a; border-left: 2px solid #ff00ff66;
+      background: rgba(255,255,255,0.015); position: relative;
+    }
+    [data-style="4"] .narr em { color: #00ffff; font-style: normal; text-shadow: 0 0 6px rgba(0,255,255,0.4); }
+    [data-style="4"] hr       { border: none; height: 1px; background: linear-gradient(90deg,transparent,#00ffff33,transparent); margin: 18px 0; }
+    [data-style="4"] .choices { display: flex; flex-direction: column; gap: 4px; }
+    [data-style="4"] .cho     { font-size: 14px; color: #ffffff33; cursor: pointer; padding: 10px 16px; border: 1px solid transparent; transition: all 0.15s; letter-spacing: 0.04em; }
+    [data-style="4"] .cho:hover { color: #00ffff; border-color: #00ffff33; background: rgba(0,255,255,0.04); text-shadow: 0 0 8px rgba(0,255,255,0.5); }
+    [data-style="4"] .cho-key { color: #ff00ff; margin-right: 10px; }
+    [data-style="4"] .cho-d   { display: flex; align-items: center; gap: 8px; }
+    [data-style="4"] .inp     { background: transparent; border: none; border-bottom: 1px solid #00ffff22; color: #00ffff; font-family: 'Share Tech Mono',monospace; font-size: 14px; outline: none; flex: 1; }
+    [data-style="4"] .inp:focus { border-bottom-color: #00ffff; }
+    [data-style="4"] .cursor  { display: inline-block; width: 8px; height: 14px; background: #00ffff; box-shadow: 0 0 8px #00ffff; animation: blink 1s step-end infinite; }
+
+    /* show/hide per style */
+    .only1,.only2,.only4 { display: none; }
+    [data-style="1"] .only1 { display: inline; }
+    [data-style="2"] .only2 { display: block; }
+    [data-style="4"] .only4 { display: inline; }
+  </style>
+</head>
+<body>
+
+<div id="switcher">
+  <button class="s-btn" data-s="1" onclick="sw(1)">① CRT 绿屏</button>
+  <button class="s-btn" data-s="2" onclick="sw(2)">② 像素 8-bit</button>
+  <button class="s-btn" data-s="3" onclick="sw(3)">③ SV 极简黑</button>
+  <button class="s-btn" data-s="4" onclick="sw(4)">④ 赛博霓虹</button>
+</div>
+
+<div class="wrap">
+<div class="card">
+
+  <div class="title">硅谷：第一天与最后一天</div>
+  <div class="subtitle">DAY 1 &amp; LAST DAY &nbsp;·&nbsp; TERMINAL BUILD v0.1</div>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="s-lbl">$</span>
+      <span class="s-val">45,000</span>
+      <div class="px-bar only2"><div class="px-fill" style="width:30%;background:#a7f070"></div></div>
+    </div>
+    <div class="stat">
+      <span class="s-lbl">S</span>
+      <span class="s-val">72</span>
+      <div class="px-bar only2"><div class="px-fill" style="width:72%;background:#38b764"></div></div>
+    </div>
+    <div class="stat">
+      <span class="s-lbl">P</span>
+      <span class="s-val">23</span>
+      <div class="px-bar only2"><div class="px-fill" style="width:23%;background:#ef7d57"></div></div>
+    </div>
+    <div class="stat">
+      <span class="s-lbl">STATUS</span>
+      <span class="s-val" style="font-size:11px">H-1B LOTTERY</span>
+    </div>
+  </div>
+
+  <div class="round">
+    ROUND <span class="hi">04</span> / 10 &nbsp;—&nbsp; H1B LOTTERY DAY
+  </div>
+
+  <div class="narr">
+    2024年4月1日。你盯着屏幕上的邮件主题行。<br>
+    <em>USCIS Case Status Update</em><br><br>
+    你的手指悬在触控板上，迟迟没有点击。<br>
+    旁边工位的 Kevin 已经开始低声欢呼了。<br><br>
+    你不知道那封邮件里装的，是你接下来三年的居留权，<br>
+    还是一张 72 小时内离境的通知书。<span class="cursor only1"></span><span class="cursor only4"></span>
+  </div>
+
+  <hr>
+
+  <div class="choices">
+    <div class="cho"><span class="cho-key">A.</span> 深呼吸，点开邮件。</div>
+    <div class="cho"><span class="cho-key">B.</span> 先去洗手间冷静一下。</div>
+    <div class="cho"><span class="cho-key">C.</span> 假装没看到，继续写代码。</div>
+    <div class="cho cho-d">
+      <span class="cho-key">D.</span>
+      其他：<input class="inp" type="text" placeholder="输入你的选择…">
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+  function sw(n) {
+    document.documentElement.setAttribute('data-style', n);
+  }
+</script>
+</body>
+</html>
