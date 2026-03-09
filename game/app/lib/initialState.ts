@@ -25,6 +25,8 @@ export const DEMO_ROUND: Round = {
 export const INITIAL_GAME_STATE: GameState = {
   stats: INITIAL_STATS,
   round: 4,
+  dCount: 0,
+  shelfTarget: 'I',
   currentRound: DEMO_ROUND,
   phase: 'playing',
 };

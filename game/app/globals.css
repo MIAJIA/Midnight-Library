@@ -171,3 +171,20 @@ body::after {
   94% { text-shadow:2px 0 var(--magenta),-2px 0 var(--cyan); transform:translateX(1px); }
   95% { text-shadow:0 0 10px var(--cyan); transform:none; }
 }
+
+/* ── Ending Panel ── */
+.ending-panel { display: flex; flex-direction: column; gap: 14px; }
+
+.ending-seal {
+  font-size: 7px;
+  color: var(--magenta);
+  text-shadow: var(--glow-m);
+  text-align: center;
+  letter-spacing: 0.1em;
+  animation: blink 2s step-end infinite;
+}
+.ending-name    { color: var(--cyan); text-shadow: var(--glow-c); }
+.ending-verdict { font-size: 7px; color: #fff; line-height: 2; }
+.ending-label   { font-size: 5.5px; color: var(--magenta); }
+.ending-section { font-size: 6.5px; color: var(--text); line-height: 2.2; }
+.ending-footer  { font-size: 6px; color: rgba(0,255,255,0.45); }
