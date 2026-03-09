@@ -26,6 +26,7 @@
     [data-style="2"] .s-btn[data-s="2"] { color: #ffcd75; }
     [data-style="3"] .s-btn[data-s="3"] { color: #58a6ff; }
     [data-style="4"] .s-btn[data-s="4"] { color: #00ffff; }
+    [data-style="5"] .s-btn[data-s="5"] { color: #00ffff; text-shadow: 0 0 8px #00ffff; }
 
     /* ─── LAYOUT ────────────────────────────────────────────── */
     html, body { height: 100%; transition: background 0.3s; }
@@ -188,11 +189,81 @@
     [data-style="4"] .inp:focus { border-bottom-color: #00ffff; }
     [data-style="4"] .cursor  { display: inline-block; width: 8px; height: 14px; background: #00ffff; box-shadow: 0 0 8px #00ffff; animation: blink 1s step-end infinite; }
 
+    /* ══════════════════════════════════════════════════════════
+       STYLE 5 · 像素霓虹 (Style 2 layout × Style 4 colors)
+    ══════════════════════════════════════════════════════════ */
+    [data-style="5"] { background: #000; font-family: 'Press Start 2P', monospace; }
+
+    [data-style="5"] .card {
+      background: #040404; padding: 28px 28px 32px;
+      border: 3px solid #00ffff;
+      box-shadow:
+        0 0 0 3px #00ffff,
+        0 0 0 6px #000,
+        0 0 0 9px #ff00ff55,
+        0 0 40px rgba(0,255,255,0.12);
+      image-rendering: pixelated; position: relative;
+    }
+    [data-style="5"] .title {
+      font-size: 9px; color: #00ffff; letter-spacing: 0.04em;
+      text-transform: uppercase; line-height: 2; margin-bottom: 4px;
+      text-shadow: 0 0 10px #00ffff, 0 0 24px rgba(0,255,255,0.5);
+      animation: glitch 7s infinite;
+    }
+    [data-style="5"] .subtitle { font-size: 6px; color: #ff00ff99; margin-bottom: 22px; line-height: 2; letter-spacing: 0.05em; }
+
+    [data-style="5"] .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 18px; }
+    [data-style="5"] .stat {
+      background: #0a0a0a; border: 2px solid #00ffff55; padding: 8px 6px;
+      position: relative; overflow: hidden;
+    }
+    [data-style="5"] .stat::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, #00ffff66, transparent);
+    }
+    [data-style="5"] .s-lbl { font-size: 5px; color: #ff00ff; display: block; margin-bottom: 5px; letter-spacing: 0.1em; }
+    [data-style="5"] .s-val { font-size: 7px; color: #00ffff; display: block; text-shadow: 0 0 6px #00ffff; }
+    [data-style="5"] .px-bar { margin-top: 5px; height: 4px; background: #111; border: 1px solid #00ffff33; }
+    [data-style="5"] .px-fill { height: 100%; }
+
+    [data-style="5"] .round { font-size: 6px; color: #ff00ff66; margin-bottom: 14px; letter-spacing: 0.1em; }
+    [data-style="5"] .round .hi { color: #ff00ff; text-shadow: 0 0 6px #ff00ff; }
+
+    [data-style="5"] .narr {
+      font-size: 6.5px; color: #ddd; line-height: 2.4; margin-bottom: 18px;
+      padding: 14px; background: #0a0a0a;
+      border: 2px solid #00ffff33; border-left: 5px solid #00ffff;
+      box-shadow: inset 0 0 20px rgba(0,255,255,0.03);
+    }
+    [data-style="5"] .narr em { color: #00ffff; font-style: normal; text-shadow: 0 0 6px rgba(0,255,255,0.5); }
+
+    [data-style="5"] hr { border: none; height: 2px; background: linear-gradient(90deg, transparent, #00ffff44, #ff00ff44, transparent); margin: 14px 0; }
+
+    [data-style="5"] .choices { display: flex; flex-direction: column; gap: 6px; }
+    [data-style="5"] .cho {
+      font-size: 6.5px; color: #aaa; cursor: pointer; padding: 9px 11px;
+      background: #0a0a0a; border: 2px solid #00ffff22; transition: all 0.12s; line-height: 1.8;
+    }
+    [data-style="5"] .cho:hover {
+      background: rgba(0,255,255,0.06); color: #00ffff;
+      border-color: #00ffff; text-shadow: 0 0 6px rgba(0,255,255,0.5);
+      box-shadow: 0 0 12px rgba(0,255,255,0.08);
+    }
+    [data-style="5"] .cho-key { color: #ff00ff; text-shadow: 0 0 6px #ff00ff; }
+    [data-style="5"] .cho-d { display: flex; flex-direction: column; gap: 7px; }
+    [data-style="5"] .inp {
+      background: #000; border: 2px solid #00ffff55; color: #00ffff;
+      font-family: 'Press Start 2P',monospace; font-size: 6.5px;
+      padding: 6px 8px; outline: none; width: 100%;
+    }
+    [data-style="5"] .inp:focus { border-color: #00ffff; box-shadow: 0 0 8px rgba(0,255,255,0.3); }
+
     /* show/hide per style */
-    .only1,.only2,.only4 { display: none; }
+    .only1,.only2,.only4,.only5 { display: none; }
     [data-style="1"] .only1 { display: inline; }
     [data-style="2"] .only2 { display: block; }
     [data-style="4"] .only4 { display: inline; }
+    [data-style="5"] .only5 { display: block; }
   </style>
 </head>
 <body>
@@ -202,6 +273,7 @@
   <button class="s-btn" data-s="2" onclick="sw(2)">② 像素 8-bit</button>
   <button class="s-btn" data-s="3" onclick="sw(3)">③ SV 极简黑</button>
   <button class="s-btn" data-s="4" onclick="sw(4)">④ 赛博霓虹</button>
+  <button class="s-btn" data-s="5" onclick="sw(5)">⑤ 像素霓虹 ★</button>
 </div>
 
 <div class="wrap">
@@ -215,16 +287,19 @@
       <span class="s-lbl">$</span>
       <span class="s-val">45,000</span>
       <div class="px-bar only2"><div class="px-fill" style="width:30%;background:#a7f070"></div></div>
+      <div class="px-bar only5"><div class="px-fill" style="width:30%;background:linear-gradient(90deg,#00ffff,#ff00ff)"></div></div>
     </div>
     <div class="stat">
       <span class="s-lbl">S</span>
       <span class="s-val">72</span>
       <div class="px-bar only2"><div class="px-fill" style="width:72%;background:#38b764"></div></div>
+      <div class="px-bar only5"><div class="px-fill" style="width:72%;background:#00ffff"></div></div>
     </div>
     <div class="stat">
       <span class="s-lbl">P</span>
       <span class="s-val">23</span>
       <div class="px-bar only2"><div class="px-fill" style="width:23%;background:#ef7d57"></div></div>
+      <div class="px-bar only5"><div class="px-fill" style="width:23%;background:#ff00ff"></div></div>
     </div>
     <div class="stat">
       <span class="s-lbl">STATUS</span>
