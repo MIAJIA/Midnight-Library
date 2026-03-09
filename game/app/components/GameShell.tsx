@@ -11,10 +11,12 @@ export default function GameShell() {
   const [game, setGame] = useState<GameState>(INITIAL_GAME_STATE);
   const [history, setHistory] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [typedText, setTypedText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleChoice = async (key: 'A' | 'B' | 'C' | 'D', customText?: string) => {
     setLoading(true);
+    setTypedText('');
     setError(null);
 
     try {
@@ -32,8 +34,24 @@ export default function GameShell() {
       });
 
       if (!res.ok) throw new Error(`API error ${res.status}`);
-      const data: LLMTurnResponse = await res.json();
+      if (!res.body) throw new Error('No response body');
 
+      // Read the stream and accumulate full JSON
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        fullText += decoder.decode(value, { stream: true });
+        // Show partial narrative as it arrives (extract from partial JSON)
+        const narrativeMatch = fullText.match(/"narrative"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+        if (narrativeMatch) setTypedText(narrativeMatch[1].replace(/\\n/g, '\n'));
+      }
+
+      const data: LLMTurnResponse = JSON.parse(fullText);
+      setTypedText(null);
       setHistory((h) => [...h, data.narrative]);
       setGame((prev) => ({
         ...prev,
@@ -54,6 +72,7 @@ export default function GameShell() {
         },
       }));
     } catch (e) {
+      setTypedText(null);
       setError(e instanceof Error ? e.message : 'Unknown error');
     } finally {
       setLoading(false);
@@ -80,15 +99,17 @@ export default function GameShell() {
       </p>
 
       {/* ── Playing phase ── */}
-      {!isEnding && currentRound && (
+      {!isEnding && (
         <>
-          <Narrative text={currentRound.narrative} />
+          <Narrative text={typedText !== null ? typedText : (currentRound?.narrative ?? '')} />
           <hr className="divider" />
-          <ChoiceList
-            choices={currentRound.choices}
-            onSelect={handleChoice}
-            disabled={loading}
-          />
+          {!loading && currentRound && (
+            <ChoiceList
+              choices={currentRound.choices}
+              onSelect={handleChoice}
+              disabled={false}
+            />
+          )}
         </>
       )}
 

@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.5-pro',
+    model: 'gemini-2.5-pro-preview-05-06',
     systemInstruction: SYSTEM_PROMPT,
     generationConfig: {
       responseMimeType: 'application/json',
@@ -102,10 +102,28 @@ export async function POST(req: NextRequest) {
   const userMessage = buildUserMessage({ stats, round, dCount, choiceKey, customText, history });
 
   try {
-    const result = await model.generateContent(userMessage);
-    const text = result.response.text();
-    const parsed: LLMTurnResponse = JSON.parse(text);
-    return NextResponse.json(parsed);
+    // Stream the response so the client gets bytes immediately,
+    // then parse the complete JSON once fully received.
+    const streamResult = await model.generateContentStream(userMessage);
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        let fullText = '';
+        for await (const chunk of streamResult.stream) {
+          const chunkText = chunk.text();
+          fullText += chunkText;
+          // Forward raw chunks so the client can show a loading indicator
+          controller.enqueue(new TextEncoder().encode(chunkText));
+        }
+        controller.close();
+        // Validate JSON before stream ends (errors surface in client fetch)
+        JSON.parse(fullText);
+      },
+    });
+
+    return new Response(stream, {
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (err) {
     console.error('Gemini API error:', err);
     return NextResponse.json({ error: 'LLM call failed' }, { status: 500 });
