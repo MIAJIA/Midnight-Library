@@ -4,41 +4,60 @@ import { useState } from 'react';
 import StatsBar from './StatsBar';
 import Narrative from './Narrative';
 import ChoiceList from './ChoiceList';
-import type { GameState } from '@/app/types/game';
+import type { GameState, LLMTurnResponse } from '@/app/types/game';
 import { INITIAL_GAME_STATE } from '@/app/lib/initialState';
 
 export default function GameShell() {
   const [game, setGame] = useState<GameState>(INITIAL_GAME_STATE);
+  const [history, setHistory] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChoice = async (key: 'A' | 'B' | 'C' | 'D', customText?: string) => {
     setLoading(true);
-    // TODO: replace mock with POST /api/turn
-    const isD = key === 'D';
-    setGame((prev) => {
-      const nextDCount = isD ? prev.dCount + 1 : prev.dCount;
-      const nextRound = Math.min(10, prev.round + 1);
-      // Mock shelf_target heuristic (LLM will override this)
-      const nextShelf = prev.stats.awakening + (isD ? 15 : 0) > 80 ? 'IV'
-        : prev.stats.prestige > 60 && prev.stats.awakening > 30 ? 'II'
-        : nextDCount >= 3 ? 'V'
-        : 'I';
-      return {
+    setError(null);
+
+    try {
+      const res = await fetch('/api/turn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stats: game.stats,
+          round: game.round,
+          dCount: game.dCount,
+          choiceKey: key,
+          customText,
+          history,
+        }),
+      });
+
+      if (!res.ok) throw new Error(`API error ${res.status}`);
+      const data: LLMTurnResponse = await res.json();
+
+      setHistory((h) => [...h, data.narrative]);
+      setGame((prev) => ({
         ...prev,
-        dCount: nextDCount,
-        shelfTarget: nextShelf as typeof prev.shelfTarget,
-        round: nextRound,
-        phase: nextRound === 10 ? 'ending' : 'playing',
+        round: data.round,
+        dCount: data.d_count,
+        shelfTarget: data.shelf_target,
+        phase: data.ending ? 'ending' : 'playing',
+        endingContent: data.ending,
+        currentRound: data.choices
+          ? { ...prev.currentRound!, narrative: data.narrative, choices: data.choices }
+          : prev.currentRound,
         stats: {
-          ...prev.stats,
-          sanity:    Math.max(0, prev.stats.sanity - 8),
-          prestige:  prev.stats.prestige + (isD ? 2 : 1),
-          awakening: isD ? Math.min(100, prev.stats.awakening + 15) : prev.stats.awakening,
-          capital:   prev.stats.capital + (key === 'A' ? 1200 : key === 'B' ? 500 : 200),
+          capital:   Math.max(0, prev.stats.capital   + data.delta.$),
+          sanity:    Math.max(0, Math.min(100, prev.stats.sanity   + data.delta.S)),
+          prestige:  Math.max(0, Math.min(100, prev.stats.prestige + data.delta.P)),
+          awakening: Math.max(0, Math.min(100, prev.stats.awakening + data.delta.A)),
+          status: data.status,
         },
-      };
-    });
-    setLoading(false);
+      }));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unknown error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const { stats, round, dCount, shelfTarget, currentRound, phase, endingContent } = game;
@@ -95,6 +114,7 @@ export default function GameShell() {
       )}
 
       {loading && <p className="loading-text">processing…</p>}
+      {error && <p className="error-text">! {error}</p>}
     </div>
   );
 }

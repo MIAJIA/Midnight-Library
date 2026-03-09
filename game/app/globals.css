@@ -188,3 +188,5 @@ body::after {
 .ending-label   { font-size: 5.5px; color: var(--magenta); }
 .ending-section { font-size: 6.5px; color: var(--text); line-height: 2.2; }
 .ending-footer  { font-size: 6px; color: rgba(0,255,255,0.45); }
+
+.error-text { font-size:6px; color:var(--magenta); margin-top:8px; }
